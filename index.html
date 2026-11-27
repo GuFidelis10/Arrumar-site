@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07130f">
+  <meta name="description" content="Invista com clareza. Conheça a Aurora, uma experiência simples para acompanhar seus objetivos financeiros.">
+  <title>Aurora — seu futuro em movimento</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07130f;
+      --bg-soft: #0c1b15;
+      --panel: rgba(17, 38, 29, .72);
+      --line: rgba(210, 241, 220, .11);
+      --text: #f2f7f1;
+      --muted: #9aaca0;
+      --green: #b7f36b;
+      --green-deep: #7ac44e;
+      --mint: #65d9ad;
+      --serif: Georgia, "Times New Roman", serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .grain {
+      position: fixed;
+      z-index: 8;
+      inset: 0;
+      pointer-events: none;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    }
+
+    .ambient {
+      position: absolute;
+      z-index: -1;
+      width: 720px;
+      height: 720px;
+      right: -170px;
+      top: -190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(87, 181, 111, .14), rgba(7, 19, 15, 0) 68%);
+      animation: breathe 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .wrap { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+
+    .nav-shell {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      background: rgba(7, 19, 15, .76);
+      backdrop-filter: blur(18px);
+    }
+
+    nav {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 720; letter-spacing: -.7px; }
+    .brand-mark { width: 27px; height: 27px; color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 34px; color: #b6c3b9; font-size: 13px; }
+    .nav-links a, .footer-links a { transition: color .2s ease; }
+    .nav-links a:hover, .footer-links a:hover { color: var(--green); }
+    .nav-actions { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .login { color: #c4d0c6; }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 0 19px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--green);
+      color: #11200f;
+      font-size: 13px;
+      font-weight: 750;
+      transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+      cursor: pointer;
+    }
+    .button:hover { transform: translateY(-2px); background: #c7ff7f; box-shadow: 0 10px 30px rgba(183,243,107,.16); }
+    .button svg { width: 16px; height: 16px; }
+    .button-outline { border-color: rgba(220,245,226,.18); background: rgba(255,255,255,.025); color: var(--text); }
+    .button-outline:hover { background: rgba(255,255,255,.08); box-shadow: none; }
+    .menu-toggle { display: none; border: 0; background: none; color: var(--text); padding: 8px; cursor: pointer; }
+
+    .hero {
+      position: relative;
+      min-height: 650px;
+      display: grid;
+      grid-template-columns: 1.03fr .97fr;
+      align-items: center;
+      gap: 44px;
+      padding: 74px 0 80px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.55px;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 21px; height: 1px; background: currentColor; }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 620px;
+      margin: 22px 0 20px;
+      font-size: clamp(48px, 6vw, 76px);
+      line-height: .99;
+      letter-spacing: -4.4px;
+      font-weight: 540;
+      animation: slide-up .85s .1s both;
+    }
+    h1 em { color: var(--green); font-family: var(--serif); font-weight: 400; }
+    .hero-copy { max-width: 480px; color: var(--muted); font-size: 16px; line-height: 1.75; animation: slide-up .85s .23s both; }
+    .hero-buttons { display: flex; align-items: center; gap: 12px; margin-top: 30px; animation: slide-up .85s .35s both; }
+    .proof { display: flex; align-items: center; gap: 12px; margin-top: 30px; color: #98aa9d; font-size: 11px; animation: slide-up .85s .45s both; }
+    .avatars { display: flex; padding-left: 4px; }
+    .avatar { display: grid; width: 25px; height: 25px; margin-left: -4px; place-items: center; border: 2px solid var(--bg); border-radius: 50%; background: #d7a07d; color: #17241b; font-size: 8px; font-weight: 800; }
+    .avatar:nth-child(2) { background: #8db4a0; }
+    .avatar:nth-child(3) { background: #b7a4d6; }
+    .avatar:nth-child(4) { background: #e0c779; }
+
+    .visual { position: relative; min-height: 460px; display: grid; place-items: center; perspective: 1000px; }
+    .orbit {
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border: 1px solid rgba(191, 237, 199, .08);
+      border-radius: 50%;
+      animation: rotate 34s linear infinite;
+    }
+    .orbit::before, .orbit::after { content: ""; position: absolute; border-radius: 50%; background: var(--green); box-shadow: 0 0 18px rgba(183,243,107,.7); }
+    .orbit::before { width: 5px; height: 5px; top: 55px; left: 62px; }
+    .orbit::after { width: 4px; height: 4px; right: 45px; bottom: 86px; background: var(--mint); }
+    .orbit-two { width: 350px; height: 350px; border-style: dashed; opacity: .5; animation-direction: reverse; animation-duration: 55s; }
+    .orbit-two::before { top: 25px; left: 50%; }
+    .orbit-two::after { display: none; }
+    .dashboard {
+      position: relative;
+      z-index: 2;
+      width: min(400px, 100%);
+      padding: 23px;
+      overflow: hidden;
+      border: 1px solid rgba(201, 238, 210, .16);
+      border-radius: 17px;
+      background: linear-gradient(145deg, rgba(22, 47, 35, .97), rgba(10, 25, 19, .98));
+      box-shadow: 0 28px 90px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.07);
+      transform: rotateY(-7deg) rotateX(3deg);
+      animation: card-float 6s ease-in-out infinite;
+    }
+    .dash-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .dash-label { color: #9daf9f; font-size: 11px; }
+    .dash-period { padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; color: #b1c0b4; font-size: 10px; }
+    .balance { margin-top: 12px; font-size: 32px; font-weight: 620; letter-spacing: -1.5px; }
+    .balance small { color: #97aa9c; font-size: 12px; font-weight: 450; letter-spacing: 0; }
+    .growth { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; color: var(--green); font-size: 11px; }
+    .chart { width: 100%; height: 144px; margin-top: 18px; overflow: visible; }
+    .chart-grid line { stroke: rgba(225,245,228,.08); stroke-dasharray: 4 5; }
+    .chart-area { fill: url(#areaFill); opacity: .6; }
+    .chart-line {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 2.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: draw-line 2s .5s ease forwards;
+    }
+    .chart-dot { fill: var(--green); filter: drop-shadow(0 0 7px rgba(183,243,107,.8)); animation: pulse 2s ease-in-out infinite; }
+    .chart-labels { display: flex; justify-content: space-between; color: #73877a; font-size: 9px; }
+    .dash-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 19px; }
+    .mini-stat { padding: 12px; border: 1px solid rgba(220,245,226,.08); border-radius: 9px; background: rgba(255,255,255,.025); }
+    .mini-stat span { display: block; color: #8fa194; font-size: 10px; }
+    .mini-stat strong { display: block; margin-top: 6px; font-size: 14px; font-weight: 600; }
+    .float-chip {
+      position: absolute;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 14px;
+      border: 1px solid rgba(198, 234, 205, .14);
+      border-radius: 10px;
+      background: rgba(14, 33, 24, .93);
+      box-shadow: 0 14px 40px rgba(0,0,0,.25);
+      animation: chip-float 5s ease-in-out infinite;
+    }
+    .float-chip.top { top: 52px; right: -14px; }
+    .float-chip.bottom { bottom: 45px; left: -12px; animation-delay: -2.5s; }
+    .chip-icon { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 8px; background: rgba(183,243,107,.12); color: var(--green); }
+    .chip-icon svg { width: 15px; }
+    .chip-copy small { display: block; color: #93a498; font-size: 9px; }
+    .chip-copy strong { display: block; margin-top: 3px; font-size: 11px; }
+
+    .ticker-wrap { border-top: 1px solid rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.015); overflow: hidden; }
+    .ticker { display: flex; width: max-content; animation: ticker 32s linear infinite; }
+    .ticker-set { display: flex; align-items: center; gap: 34px; padding: 17px 17px 17px 0; }
+    .ticker-item { display: flex; align-items: center; gap: 8px; color: #9eaea2; font-size: 10px; white-space: nowrap; }
+    .ticker-item b { color: #e5eee6; font-size: 10px; }
+    .ticker-item em { color: var(--green); font-style: normal; }
+    .ticker-item em.down { color: #ed8984; }
+    .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: #648574; }
+
+    section.content-section { padding: 115px 0; }
+    .section-heading { max-width: 650px; margin: 0 auto 54px; text-align: center; }
+    .section-heading h2 { margin: 16px 0 14px; font-size: clamp(35px, 4vw, 51px); line-height: 1.08; letter-spacing: -2.5px; font-weight: 540; }
+    .section-heading h2 em { color: var(--green); font-family: var(--serif); font-weight: 400; }
+    .section-heading p { max-width: 510px; margin: 0 auto; color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature-card {
+      position: relative;
+      min-height: 245px;
+      padding: 27px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(19, 41, 30, .77), rgba(10, 25, 19, .66));
+      transition: transform .3s ease, border-color .3s ease, background .3s ease;
+    }
+    .feature-card:hover { transform: translateY(-7px); border-color: rgba(183,243,107,.35); background: linear-gradient(145deg, rgba(26, 54, 38, .85), rgba(10, 25, 19, .74)); }
+    .feature-icon { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(183,243,107,.2); border-radius: 10px; background: rgba(183,243,107,.08); color: var(--green); }
+    .feature-icon svg { width: 20px; }
+    .feature-card h3 { margin: 24px 0 9px; font-size: 17px; font-weight: 600; letter-spacing: -.35px; }
+    .feature-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.75; }
+    .card-number { position: absolute; top: 25px; right: 26px; color: #617468; font-size: 10px; }
+
+    .simulator {
+      position: relative;
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 70px;
+      align-items: center;
+      padding: 54px;
+      overflow: hidden;
+      border: 1px solid rgba(183,243,107,.18);
+      border-radius: 17px;
+      background: radial-gradient(ellipse at 90% 50%, rgba(80, 146, 91, .15), transparent 50%), #0b1a13;
+    }
+    .simulator::after { content: ""; position: absolute; right: -120px; top: -200px; width: 400px; height: 400px; border: 1px solid rgba(183,243,107,.08); border-radius: 50%; box-shadow: 0 0 0 40px rgba(183,243,107,.018), 0 0 0 80px rgba(183,243,107,.015); pointer-events: none; }
+    .sim-intro, .sim-panel { position: relative; z-index: 1; }
+    .sim-intro h2 { margin: 17px 0; font-size: clamp(33px, 4vw, 46px); line-height: 1.08; letter-spacing: -2px; font-weight: 540; }
+    .sim-intro h2 em { color: var(--green); font-family: var(--serif); font-weight: 400; }
+    .sim-intro p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .sim-panel { padding: 25px; border: 1px solid rgba(220,245,226,.1); border-radius: 12px; background: rgba(7,19,15,.68); }
+    .input-head { display: flex; justify-content: space-between; gap: 12px; color: #adbbb0; font-size: 11px; }
+    .input-head output { color: var(--green); font-size: 12px; font-weight: 650; }
+    input[type="range"] { width: 100%; height: 4px; margin: 17px 0 25px; accent-color: var(--green); cursor: pointer; }
+    .estimate { padding-top: 18px; border-top: 1px solid var(--line); }
+    .estimate span { color: #96a99a; font-size: 10px; }
+    .estimate strong { display: block; margin: 7px 0 5px; color: var(--green); font-size: clamp(30px, 4vw, 39px); font-weight: 560; letter-spacing: -1.5px; transition: transform .18s ease; }
+    .estimate strong.bump { transform: scale(1.035); }
+    .estimate small { color: #738579; font-size: 9px; }
+    .disclaimer { margin: 14px 0 0; color: #718277; font-size: 9px; line-height: 1.6; }
+
+    .quote-section { padding: 80px 0 110px; text-align: center; }
+    .quote-mark { color: var(--green); font-family: var(--serif); font-size: 55px; line-height: .8; }
+    blockquote { max-width: 790px; margin: 18px auto 23px; font-family: var(--serif); font-size: clamp(25px, 3.4vw, 40px); line-height: 1.3; color: #e9f0e9; }
+    .quote-by { color: #8fa194; font-size: 11px; }
+
+    .final-cta { position: relative; padding: 52px 25px; overflow: hidden; border: 1px solid rgba(183,243,107,.2); border-radius: 14px; background: linear-gradient(110deg, rgba(34, 68, 43, .56), rgba(12, 31, 21, .85)); text-align: center; }
+    .final-cta::before { content: ""; position: absolute; left: 50%; top: -220px; width: 420px; height: 420px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(183,243,107,.1), transparent 68%); }
+    .final-cta > * { position: relative; }
+    .final-cta h2 { margin: 0 0 12px; font-size: clamp(30px, 4vw, 45px); letter-spacing: -2px; font-weight: 550; }
+    .final-cta p { margin: 0 0 23px; color: var(--muted); font-size: 13px; }
+
+    footer { margin-top: 100px; padding: 27px 0; border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .copyright { color: #718277; font-size: 10px; }
+    .footer-links { display: flex; gap: 23px; color: #8fa194; font-size: 10px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: .1s; }
+    .delay-2 { transition-delay: .2s; }
+    .delay-3 { transition-delay: .3s; }
+
+    @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes breathe { from { transform: scale(.9); opacity: .65; } to { transform: scale(1.08); opacity: 1; } }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes card-float { 0%, 100% { transform: rotateY(-7deg) rotateX(3deg) translateY(0); } 50% { transform: rotateY(-5deg) rotateX(2deg) translateY(-9px); } }
+    @keyframes chip-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes draw-line { to { stroke-dashoffset: 0; } }
+    @keyframes pulse { 0%, 100% { r: 4; opacity: 1; } 50% { r: 6; opacity: .7; } }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+
+    @media (max-width: 900px) {
+      .hero { min-height: 0; grid-template-columns: 1fr 1fr; gap: 12px; padding: 70px 0; }
+      .visual { min-height: 410px; }
+      .orbit { width: 350px; height: 350px; }
+      .orbit-two { width: 290px; height: 290px; }
+      .dashboard { padding: 19px; }
+      .float-chip.top { right: -2px; }
+      .float-chip.bottom { left: -2px; }
+      .simulator { gap: 35px; padding: 38px; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: min(100% - 36px, 500px); }
+      nav { height: 67px; }
+      .menu-toggle { display: inline-flex; }
+      .nav-links {
+        position: absolute;
+        top: 66px;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px 18px 17px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(7,19,15,.97);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: .2s ease;
+      }
+      .nav-links.open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links a { padding: 13px 3px; }
+      .nav-actions { gap: 12px; }
+      .nav-actions .login { display: none; }
+      .nav-actions .button { min-height: 38px; padding: 0 12px; font-size: 11px; }
+      .hero { grid-template-columns: 1fr; gap: 15px; padding: 61px 0 55px; }
+      h1 { max-width: 500px; font-size: clamp(48px, 13vw, 68px); letter-spacing: -3.4px; }
+      .hero-copy { font-size: 14px; }
+      .visual { min-height: 390px; margin-top: 0; }
+      .dashboard { max-width: 370px; transform: none; }
+      .orbit { width: 330px; height: 330px; }
+      .orbit-two { width: 270px; height: 270px; }
+      .float-chip.top { top: 24px; }
+      .float-chip.bottom { bottom: 20px; }
+      section.content-section { padding: 78px 0; }
+      .section-heading { margin-bottom: 35px; }
+      .cards { grid-template-columns: 1fr; gap: 12px; }
+      .feature-card { min-height: 205px; }
+      .simulator { grid-template-columns: 1fr; gap: 27px; padding: 28px 20px; }
+      .sim-panel { padding: 20px; }
+      .quote-section { padding: 45px 0 75px; }
+      footer { margin-top: 70px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="nav-shell">
+    <nav class="wrap" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="Aurora, início">
+        <svg class="brand-mark" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M4 20.5 13.9 4l10 16.5h-5.3l-4.7-7.9-4.7 7.9H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M10.5 20.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        aurora
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#simulador">Simulador</a>
+        <a href="#sobre">Sobre nós</a>
+      </div>
+      <div class="nav-actions">
+        <a class="login" href="#comece">Entrar</a>
+        <a class="button" href="#comece">Começar agora <span aria-hidden="true">↗</span></a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <div class="ambient" aria-hidden="true"></div>
+    <section class="hero wrap" id="inicio">
+      <div>
+        <span class="eyebrow">Investir com intenção</span>
+        <h1>Seu futuro merece <em>crescer.</em></h1>
+        <p class="hero-copy">Uma forma mais clara e tranquila de cuidar do seu dinheiro. Descubra possibilidades, acompanhe seus objetivos e avance no seu ritmo.</p>
+        <div class="hero-buttons">
+          <a class="button" href="#simulador">Explore seu potencial <span aria-hidden="true">↗</span></a>
+          <a class="button button-outline" href="#como-funciona">Conheça a Aurora</a>
+        </div>
+        <div class="proof">
+          <div class="avatars" aria-hidden="true"><span class="avatar">MA</span><span class="avatar">CL</span><span class="avatar">JP</span><span class="avatar">+</span></div>
+          <span>Uma comunidade construindo o amanhã</span>
+        </div>
+      </div>
+
+      <div class="visual" aria-label="Prévia ilustrativa de um painel de investimentos">
+        <div class="orbit" aria-hidden="true"></div>
+        <div class="orbit orbit-two" aria-hidden="true"></div>
+        <div class="dashboard">
+          <div class="dash-top">
+            <div>
+              <div class="dash-label">Visão geral da carteira</div>
+              <div class="balance">R$ 24.860<small>,00</small></div>
+              <div class="growth"><span aria-hidden="true">↗</span> +8,42% <span style="color:#829488">nos últimos 12 meses</span></div>
+            </div>
+            <span class="dash-period">12 meses⌄</span>
+          </div>
+          <svg class="chart" viewBox="0 0 360 145" role="img" aria-label="Gráfico ilustrativo em tendência de alta">
+            <defs>
+              <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#b7f36b" stop-opacity=".27"/><stop offset="1" stop-color="#b7f36b" stop-opacity="0"/></linearGradient>
+            </defs>
+            <g class="chart-grid"><line x1="0" y1="20" x2="360" y2="20"/><line x1="0" y1="60" x2="360" y2="60"/><line x1="0" y1="100" x2="360" y2="100"/><line x1="0" y1="140" x2="360" y2="140"/></g>
+            <path class="chart-area" d="M0 113 C20 105 27 119 48 102 S76 93 91 99 S119 70 140 84 S165 67 183 73 S210 60 225 66 S247 35 267 49 S287 37 301 44 S327 18 343 29 L360 17 V145 H0Z"/>
+            <path class="chart-line" d="M0 113 C20 105 27 119 48 102 S76 93 91 99 S119 70 140 84 S165 67 183 73 S210 60 225 66 S247 35 267 49 S287 37 301 44 S327 18 343 29 L360 17"/>
+            <circle class="chart-dot" cx="343" cy="29" r="4"/>
+          </svg>
+          <div class="chart-labels"><span>JAN</span><span>MAR</span><span>MAI</span><span>JUL</span><span>SET</span><span>NOV</span></div>
+          <div class="dash-bottom">
+            <div class="mini-stat"><span>Perfil</span><strong>Moderado</strong></div>
+            <div class="mini-stat"><span>Objetivo</span><strong>Reserva futura</strong></div>
+          </div>
+        </div>
+        <div class="float-chip top"><span class="chip-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14 8 9l3 3 6-7"/><path d="M12 5h5v5"/></svg></span><span class="chip-copy"><small>Seus objetivos</small><strong>Em movimento</strong></span></div>
+        <div class="float-chip bottom"><span class="chip-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg></span><span class="chip-copy"><small>Seu ritmo</small><strong>Consistência importa</strong></span></div>
+      </div>
+    </section>
+
+    <div class="ticker-wrap" aria-label="Indicadores ilustrativos do mercado">
+      <div class="ticker">
+        <div class="ticker-set">
+          <span class="ticker-item"><b>IBOV</b> 128.167 <em>+0,84%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>CDI</b> 10,65% <em>+0,02%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IPCA</b> 4,42% <em class="down">−0,11%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>USD/BRL</b> 5,72 <em>+0,23%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IFIX</b> 3.412 <em>+0,56%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IBOV</b> 128.167 <em>+0,84%</em></span><i class="ticker-dot"></i>
+        </div>
+        <div class="ticker-set" aria-hidden="true">
+          <span class="ticker-item"><b>IBOV</b> 128.167 <em>+0,84%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>CDI</b> 10,65% <em>+0,02%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IPCA</b> 4,42% <em class="down">−0,11%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>USD/BRL</b> 5,72 <em>+0,23%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IFIX</b> 3.412 <em>+0,56%</em></span><i class="ticker-dot"></i>
+          <span class="ticker-item"><b>IBOV</b> 128.167 <em>+0,84%</em></span><i class="ticker-dot"></i>
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section wrap" id="como-funciona">
+      <div class="section-heading reveal">
+        <span class="eyebrow">Seu dinheiro, suas escolhas</span>
+        <h2>Mais clareza para <em>cada passo.</em></h2>
+        <p>Investir não precisa ser complicado. A Aurora reúne ferramentas e informação para você tomar decisões alinhadas com seus planos.</p>
+      </div>
+      <div class="cards">
+        <article class="feature-card reveal">
+          <span class="card-number">01 / 03</span>
+          <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/><path d="M16 6h4v4"/></svg></span>
+          <h3>Veja o todo</h3>
+          <p>Uma visão organizada para acompanhar sua jornada e entender como cada escolha se conecta aos seus objetivos.</p>
+        </article>
+        <article class="feature-card reveal delay-1">
+          <span class="card-number">02 / 03</span>
+          <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><path d="M8 3.8 6.5 2M16 3.8 17.5 2"/></svg></span>
+          <h3>No seu tempo</h3>
+          <p>Comece pelo que faz sentido para você. Construa hábitos consistentes sem pressa e com mais tranquilidade.</p>
+        </article>
+        <article class="feature-card reveal delay-2">
+          <span class="card-number">03 / 03</span>
+          <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 4.5 6v5.5c0 4.4 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5.1 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h3>Informação com contexto</h3>
+          <p>Conteúdo para ajudar você a conhecer possibilidades e riscos antes de tomar qualquer decisão.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section wrap" id="simulador">
+      <div class="simulator reveal">
+        <div class="sim-intro">
+          <span class="eyebrow">Um exercício de possibilidades</span>
+          <h2>Imagine onde você pode <em>chegar.</em></h2>
+          <p>Ajuste os valores e explore como o tempo e a constância podem fazer parte dos seus planos.</p>
+        </div>
+        <div class="sim-panel">
+          <label class="input-head" for="monthly">
+            <span>Aporte mensal</span>
+            <output id="monthlyOutput" for="monthly">R$ 500</output>
+          </label>
+          <input id="monthly" type="range" min="100" max="5000" step="100" value="500">
+          <label class="input-head" for="years">
+            <span>Período</span>
+            <output id="yearsOutput" for="years">10 anos</output>
+          </label>
+          <input id="years" type="range" min="1" max="30" step="1" value="10">
+          <div class="estimate">
+            <span>Valor hipotético ao final do período</span>
+            <strong id="estimateValue" aria-live="polite">R$ 0</strong>
+            <small>Exemplo ilustrativo com taxa hipotética de 0,6% ao mês.</small>
+          </div>
+          <p class="disclaimer">Simulação educativa, não representa rentabilidade garantida nem recomendação de investimento. Rentabilidade passada não garante resultados futuros.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote-section wrap reveal" id="sobre">
+      <div class="quote-mark" aria-hidden="true">“</div>
+      <blockquote>O melhor momento para começar a cuidar do seu futuro é quando você decide dar o primeiro passo.</blockquote>
+      <div class="quote-by">AURORA · INVESTIR COM INTENÇÃO</div>
+    </section>
+
+    <section class="wrap reveal" id="comece">
+      <div class="final-cta">
+        <h2>Seu próximo capítulo começa aqui.</h2>
+        <p>Descubra um jeito mais consciente de planejar o que vem pela frente.</p>
+        <a class="button" href="#simulador">Comece explorando <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <a class="brand" href="#inicio">
+        <svg class="brand-mark" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M4 20.5 13.9 4l10 16.5h-5.3l-4.7-7.9-4.7 7.9H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10.5 20.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        aurora
+      </a>
+      <span class="copyright">© <span id="year"></span> Aurora. Conteúdo ilustrativo para fins educativos.</span>
+      <div class="footer-links"><a href="#sobre">Sobre</a><a href="#simulador">Simulador</a><a href="#inicio">Voltar ao topo ↑</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.querySelector("#menuToggle");
+    const navLinks = document.querySelector("#navLinks");
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.setAttribute("aria-label", isOpen ? "Fechar menu" : "Abrir menu");
+    });
+
+    navLinks.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Abrir menu");
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+
+    const monthly = document.querySelector("#monthly");
+    const years = document.querySelector("#years");
+    const monthlyOutput = document.querySelector("#monthlyOutput");
+    const yearsOutput = document.querySelector("#yearsOutput");
+    const estimateValue = document.querySelector("#estimateValue");
+    const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+    function updateEstimate() {
+      const contribution = Number(monthly.value);
+      const months = Number(years.value) * 12;
+      const monthlyRate = 0.006;
+      const total = contribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+      monthlyOutput.value = money.format(contribution);
+      monthlyOutput.textContent = money.format(contribution);
+      yearsOutput.value = `${years.value} ${years.value === "1" ? "ano" : "anos"}`;
+      yearsOutput.textContent = yearsOutput.value;
+      estimateValue.textContent = money.format(total);
+      estimateValue.classList.remove("bump");
+      requestAnimationFrame(() => estimateValue.classList.add("bump"));
+    }
+
+    monthly.addEventListener("input", updateEstimate);
+    years.addEventListener("input", updateEstimate);
+    updateEstimate();
+
+    document.querySelector("#year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
